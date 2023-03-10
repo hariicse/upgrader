@@ -124,6 +124,10 @@ class Upgrader {
   /// Hide or show release notes (default: true)
   bool showReleaseNotes;
 
+  int langid;
+
+  ImageProvider? assetImage;
+
   /// Called when [Upgrader] determines that an upgrade may or may not be
   /// displayed. The [value] parameter will be true when it should be displayed,
   /// and false when it should not be displayed. One good use for this callback
@@ -172,6 +176,8 @@ class Upgrader {
     this.showLater = true,
     this.showReleaseNotes = true,
     this.canDismissDialog = false,
+    this.langid = 2,
+    this.assetImage,
     this.countryCode,
     this.languageCode,
     this.minAppVersion,
@@ -588,16 +594,100 @@ class Upgrader {
     // Save the date/time as the last time alerted.
     saveLastAlerted();
 
-    showDialog(
-      barrierDismissible: canDismissDialog,
+    // showDialog(
+    //   barrierDismissible: canDismissDialog,
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return WillPopScope(
+    //       onWillPop: () async => _shouldPopScope(),
+    //       child: dialogStyle == UpgradeDialogStyle.material
+    //           ? _alertDialog(title!, message, releaseNotes, context)
+    //           : _cupertinoAlertDialog(title!, message, releaseNotes, context),
+    //     );
+    //   },
+    // );
+
+    String titleText =
+        langid == 2 ? 'Aggiorna l\'app CedolinoApp' : 'Update the CedolinoApp';
+    String bodyText = langid == 2
+        ? 'Questa versione è scaduta. Aggiornala subito per continuare ad utilizzare l\'App!'
+        : 'This version has expired. Update it now to continue using the App!';
+    String btnText =
+        langid == 2 ? 'AGGIORNA PER CONTINUARE' : 'UPDATE TO CONTINUE';
+    showModalBottomSheet(
       context: context,
+      isDismissible: canDismissDialog,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
       builder: (BuildContext context) {
         return WillPopScope(
-          onWillPop: () async => _shouldPopScope(),
-          child: dialogStyle == UpgradeDialogStyle.material
-              ? _alertDialog(title!, message, releaseNotes, context)
-              : _cupertinoAlertDialog(title!, message, releaseNotes, context),
-        );
+            onWillPop: () async => _shouldPopScope(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF10B5CF),
+                      Color(0xFF216779),
+                      Color(0xFF10B5CF)
+                    ]),
+              ),
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 60,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12))),
+                    child: ClipRRect(
+                      child: Image(image: assetImage!),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 60,
+                  ),
+                  Text(
+                    titleText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                  SizedBox(
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      bodyText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 60,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width - 40,
+                    child: ElevatedButton(
+                      child: Text(
+                        btnText,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF03A9F4),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18))),
+                      onPressed: () => onUserUpdated(context, !blocked()),
+                    ),
+                  )
+                ],
+              ),
+            ));
       },
     );
   }
@@ -632,26 +722,30 @@ class Upgrader {
             children: <Widget>[
               Text(messages.message(UpgraderMessage.releaseNotes)!,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(releaseNotes),
+              Text(
+                releaseNotes,
+                maxLines: 15,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ));
     }
     return AlertDialog(
       title: Text(title, key: const Key('upgrader.dialog.title')),
       content: Container(
-          constraints: const BoxConstraints(maxHeight: 400),
+           constraints: const BoxConstraints(maxHeight: 400),
           child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(message),
-              Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: Text(messages.message(UpgraderMessage.prompt)!)),
-              if (notes != null) notes,
-            ],
-          ))),
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(message),
+          Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Text(messages.message(UpgraderMessage.prompt)!)),
+          if (notes != null) notes,
+        ],
+      ))),
       actions: <Widget>[
         if (showIgnore)
           TextButton(
@@ -679,10 +773,7 @@ class Upgrader {
               Text(messages.message(UpgraderMessage.releaseNotes)!,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
               Text(
-                releaseNotes,
-                maxLines: 14,
-                overflow: TextOverflow.ellipsis,
-              ),
+                releaseNotes),
             ],
           ));
     }
