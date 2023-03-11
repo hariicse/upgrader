@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +11,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'appcast.dart';
 import 'itunes_search_api.dart';
 import 'play_store_search_api.dart';
@@ -635,14 +633,14 @@ class Upgrader {
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF10B5CF),
-                      Color(0xFF216779),
-                      Color(0xFF10B5CF)
-                    ]),
+                // gradient: LinearGradient(
+                //     begin: Alignment.topCenter,
+                //     end: Alignment.bottomCenter,
+                //     colors: [
+                //       Color(0xFF10B5CF),
+                //       Color(0xFF216779),
+                //       Color(0xFF10B5CF)
+                //     ]),
               ),
               height: MediaQuery.of(context).size.height * 0.75,
               child: Column(
@@ -659,43 +657,70 @@ class Upgrader {
                     ),
                   ),
                   const SizedBox(
-                    height: 60,
+                    height: 40,
                   ),
                   Text(
                     titleText,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 24),
+                    style: const TextStyle(
+                        color: Color(0xFF216779),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 60,
+                    height: 40,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       bodyText,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(
+                          color: Color(0xFF216779), fontSize: 20),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       emailText,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(
+                          color: Color(0xFF216779), fontSize: 20),
                     ),
                   ),
                   TextButton(
                     onPressed: () async {
                       if (!await launchUrl(emailLaunchUri,
-                        mode: UpgradeIO.isAndroid
-                            ? LaunchMode.externalNonBrowserApplication
-                            : LaunchMode.platformDefault)) {
+                          mode: UpgradeIO.isAndroid
+                              ? LaunchMode.externalNonBrowserApplication
+                              : LaunchMode.platformDefault)) {
                         throw Exception('couldn\'t launch url$emailLaunchUri');
                       }
                     },
-                    child: Text(email),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.email,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          email,
+                          textAlign: TextAlign.center,
+                          style:
+                              const TextStyle(color: Colors.blue, fontSize: 20),
+                        ),
+                      ],
+                    ),
                   ),
+                  const Expanded(child: SizedBox()),
                   SizedBox(
                     width: MediaQuery.of(context).size.width - 40,
                     child: ElevatedButton(
@@ -709,6 +734,9 @@ class Upgrader {
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 40,
                   )
                 ],
               ),
