@@ -12,7 +12,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'appcast.dart';
 import 'itunes_search_api.dart';
 import 'play_store_search_api.dart';
@@ -594,37 +594,46 @@ class Upgrader {
     // Save the date/time as the last time alerted.
     saveLastAlerted();
 
-    // showDialog(
-    //   barrierDismissible: canDismissDialog,
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return WillPopScope(
-    //       onWillPop: () async => _shouldPopScope(),
-    //       child: dialogStyle == UpgradeDialogStyle.material
-    //           ? _alertDialog(title!, message, releaseNotes, context)
-    //           : _cupertinoAlertDialog(title!, message, releaseNotes, context),
-    //     );
-    //   },
-    // );
+    /* showDialog(
+      barrierDismissible: canDismissDialog,
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => _shouldPopScope(),
+          child: dialogStyle == UpgradeDialogStyle.material
+              ? _alertDialog(title!, message, releaseNotes, context)
+              : _cupertinoAlertDialog(title!, message, releaseNotes, context),
+        );
+      },
+    ); */
+
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'info@vantagepartners.it',
+    );
 
     String titleText =
         langid == 2 ? 'Aggiorna l\'app CedolinoApp' : 'Update the CedolinoApp';
     String bodyText = langid == 2
         ? 'Questa versione è scaduta. Aggiornala subito per continuare ad utilizzare l\'App!'
         : 'This version has expired. Update it now to continue using the App!';
+    String emailText = langid == 2
+        ? 'Se hai bisogno di supporto scrivici a'
+        : 'If you need support, write to us at';
+    String email = 'info@vantagepartners.it';
     String btnText =
         langid == 2 ? 'AGGIORNA PER CONTINUARE' : 'UPDATE TO CONTINUE';
     showModalBottomSheet(
       context: context,
       isDismissible: canDismissDialog,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
       builder: (BuildContext context) {
         return WillPopScope(
             onWillPop: () async => _shouldPopScope(),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -638,51 +647,67 @@ class Upgrader {
               height: MediaQuery.of(context).size.height * 0.75,
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 60,
                   ),
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(12))),
                     child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
                       child: Image(image: assetImage!),
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 60,
                   ),
                   Text(
                     titleText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                    style: const TextStyle(color: Colors.white, fontSize: 24),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 60,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       bodyText,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
-                  SizedBox(
-                    height: 60,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      emailText,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
-                  Container(
+                  TextButton(
+                    onPressed: () async {
+                      if (!await launchUrl(emailLaunchUri,
+                        mode: UpgradeIO.isAndroid
+                            ? LaunchMode.externalNonBrowserApplication
+                            : LaunchMode.platformDefault)) {
+                        throw Exception('couldn\'t launch url$emailLaunchUri');
+                      }
+                    },
+                    child: Text(email),
+                  ),
+                  SizedBox(
                     width: MediaQuery.of(context).size.width - 40,
                     child: ElevatedButton(
-                      child: Text(
-                        btnText,
-                        style: TextStyle(color: Colors.white),
-                      ),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF03A9F4),
+                          backgroundColor: const Color(0xFF03A9F4),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18))),
                       onPressed: () => onUserUpdated(context, !blocked()),
+                      child: Text(
+                        btnText,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   )
                 ],
@@ -710,7 +735,7 @@ class Upgrader {
     return false;
   }
 
-  AlertDialog _alertDialog(String title, String message, String? releaseNotes,
+  /* AlertDialog _alertDialog(String title, String message, String? releaseNotes,
       BuildContext context) {
     Widget? notes;
     if (releaseNotes != null) {
@@ -733,19 +758,19 @@ class Upgrader {
     return AlertDialog(
       title: Text(title, key: const Key('upgrader.dialog.title')),
       content: Container(
-           constraints: const BoxConstraints(maxHeight: 400),
+          constraints: const BoxConstraints(maxHeight: 400),
           child: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(message),
-          Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Text(messages.message(UpgraderMessage.prompt)!)),
-          if (notes != null) notes,
-        ],
-      ))),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(message),
+              Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: Text(messages.message(UpgraderMessage.prompt)!)),
+              if (notes != null) notes,
+            ],
+          ))),
       actions: <Widget>[
         if (showIgnore)
           TextButton(
@@ -772,8 +797,7 @@ class Upgrader {
             children: <Widget>[
               Text(messages.message(UpgraderMessage.releaseNotes)!,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                releaseNotes),
+              Text(releaseNotes),
             ],
           ));
     }
@@ -805,7 +829,7 @@ class Upgrader {
             onPressed: () => onUserUpdated(context, !blocked())),
       ],
     );
-  }
+  } */
 
   void onUserIgnored(BuildContext context, bool shouldPop) {
     if (debugLogging) {
