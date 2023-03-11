@@ -622,7 +622,7 @@ class Upgrader {
         langid == 2 ? 'AGGIORNA PER CONTINUARE' : 'UPDATE TO CONTINUE';
     showModalBottomSheet(
       context: context,
-      isDismissible: false,
+      isDismissible: canDismissDialog,
       enableDrag: false,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
