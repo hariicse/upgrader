@@ -3,6 +3,7 @@
  */
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -634,7 +635,7 @@ class Upgrader {
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
-              height: MediaQuery.of(context).size.height * 0.65,
+              height: MediaQuery.of(context).size.height * 0.75,
               child: Column(
                 children: [
                   const Expanded(
@@ -648,8 +649,8 @@ class Upgrader {
                       borderRadius: const BorderRadius.all(Radius.circular(12)),
                       child: Image(
                         image: assetImage!,
-                        height: 150,
-                        width: 150,
+                        height: MediaQuery.of(context).size.width * (1 / 3),
+                        width: MediaQuery.of(context).size.width * (1 / 3),
                       ),
                     ),
                   ),
