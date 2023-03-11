@@ -3,7 +3,6 @@
  */
 
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -623,7 +622,8 @@ class Upgrader {
         langid == 2 ? 'AGGIORNA PER CONTINUARE' : 'UPDATE TO CONTINUE';
     showModalBottomSheet(
       context: context,
-      isDismissible: canDismissDialog,
+      isDismissible: false,
+      enableDrag: false,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
@@ -633,42 +633,41 @@ class Upgrader {
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                // gradient: LinearGradient(
-                //     begin: Alignment.topCenter,
-                //     end: Alignment.bottomCenter,
-                //     colors: [
-                //       Color(0xFF10B5CF),
-                //       Color(0xFF216779),
-                //       Color(0xFF10B5CF)
-                //     ]),
               ),
-              height: MediaQuery.of(context).size.height * 0.75,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 60,
+                  const Expanded(
+                    child: SizedBox(),
+                    flex: 3,
                   ),
                   Container(
                     decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(12))),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(12)),
-                      child: Image(image: assetImage!),
+                      child: Image(
+                        image: assetImage!,
+                        height: 150,
+                        width: 150,
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 40,
+                  const Expanded(
+                    child: SizedBox(),
+                    flex: 2,
                   ),
                   Text(
                     titleText,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: Color(0xFF216779),
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 40,
+                  const Expanded(
+                    child: SizedBox(),
+                    flex: 2,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -676,11 +675,11 @@ class Upgrader {
                       bodyText,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Color(0xFF216779), fontSize: 20),
+                          color: Color(0xFF216779), fontSize: 16),
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
+                  const Expanded(
+                    child: SizedBox(),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -688,7 +687,7 @@ class Upgrader {
                       emailText,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Color(0xFF216779), fontSize: 20),
+                          color: Color(0xFF216779), fontSize: 16),
                     ),
                   ),
                   TextButton(
@@ -715,14 +714,17 @@ class Upgrader {
                           email,
                           textAlign: TextAlign.center,
                           style:
-                              const TextStyle(color: Colors.blue, fontSize: 20),
+                              const TextStyle(color: Colors.blue, fontSize: 16),
                         ),
                       ],
                     ),
                   ),
-                  const Expanded(child: SizedBox()),
+                  const Expanded(
+                    child: SizedBox(),
+                    flex: 2,
+                  ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width - 40,
+                    width: MediaQuery.of(context).size.width - 80,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF03A9F4),
@@ -735,9 +737,10 @@ class Upgrader {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 40,
-                  )
+                  const Expanded(
+                    child: SizedBox(),
+                    flex: 3,
+                  ),
                 ],
               ),
             ));
